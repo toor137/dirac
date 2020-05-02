@@ -1,3 +1,6 @@
+KERNEL=dirac
+KERNEL_ELF=$(KERNEL).elf
+
 CC = x86_64-elf-gcc
 AS = nasm
 
@@ -8,14 +11,14 @@ CHARDFLAGS = -std=gnu99 -masm=intel \
 	-mcmodel=kernel \
     -nostdlib \
     -ffreestanding \
-    -I./include/
+    -I.
 NASMFORMAT = elf64
 
 CFILES    := $(shell find . -type f -name '*.c')
 ASMFILES  := $(shell find . -type f -name '*.asm')
 REALFILES := $(shell find . -type f -name '*.real')
 BINS      := $(REALFILES:.real=.bin)
-OBJ       := $(CFILES:.c=.o) $(ASMFILES:.asm=.asm.o)
+OBJ       := $(CFILES:.c=.o) $(ASMFILES:.asm=.o)
 
 CLINKFLAGS= -nostdlib \
 	-static-libgcc -lgcc \
@@ -23,17 +26,17 @@ CLINKFLAGS= -nostdlib \
 
 CLAGS = -O2 -Wall -Wextra
 
-kernel.bin: $(BINS) $(OBJ) $(H_FILES)
+$(KERNEL_ELF): $(BINS) $(OBJ) $(H_FILES)
 	$(CC) $(OBJ) $(CLINKFLAGS) -o $@
 
 %.o: %.c
 	$(CC) $(CHARDFLAGS) $(CFLAGS) -c $< -o $@
 
 %.bin: %.real
-	$(ASM) $< -f bin -o $@
+	$(AS) $< -f bin -o $@
 
 %.o: %.asm
-	$(ASM) $< -f $(NASMFORMAT) -o $@
+	$(AS) $< -f $(NASMFORMAT) -o $@
 
 clean:
 	rm -f $(OBJ) $(BINS) kernel.bin
