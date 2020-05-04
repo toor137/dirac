@@ -1,4 +1,6 @@
 /**/*.o
 /**/*.bin
-kernel/dirac.elf
-
+/root/dirac.elf
+/kernel/dirac.elf
+/**/dirac.hdd
+/qloader2/*
